@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -19,10 +20,30 @@ func main() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, _ = mongo.Connect(ctx, clientOptions)
 	router := mux.NewRouter()
-	router.HandleFunc("/person", CreatePersonEndpoint).Methods("POST")
-	router.HandleFunc("/people", GetPeopleEndpoint).Methods("GET")
-	router.HandleFunc("/person/{id}", GetPersonEndpoint).Methods("GET")
-	router.HandleFunc("/delete/{id}", DeletePersonEndpoint).Methods("DELETE")
-	router.HandleFunc("/update/{id}", UpdatePersonEndpoint).Methods("PUT")
-	http.ListenAndServe(":12345", router)
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, //you service is available and allowed for this base url
+		AllowedMethods: []string{
+			http.MethodGet, //http methods for your app
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+			http.MethodHead,
+		},
+
+		AllowedHeaders: []string{
+			"*", //or you can your header key values which you are using in your application
+
+		},
+	})
+	handler := c.Handler(router)
+
+	router.HandleFunc("/api/person", CreatePersonEndpoint).Methods("POST")
+	router.HandleFunc("/api/people", GetPeopleEndpoint).Methods("GET")
+	router.HandleFunc("/api/person/{id}", GetPersonEndpoint).Methods("GET")
+	router.HandleFunc("/api/delete/{id}", DeletePersonEndpoint).Methods("DELETE")
+	router.HandleFunc("/api/update/{id}", UpdatePersonEndpoint).Methods("PUT")
+	http.ListenAndServe(":12345", handler)
 }

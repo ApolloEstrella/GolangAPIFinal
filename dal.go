@@ -24,6 +24,8 @@ type Person struct {
 // CreatePersonEndpoint ...
 func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "*")
+	response.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	var person Person
 	_ = json.NewDecoder(request.Body).Decode(&person)
 	collection := client.Database("mymongodb01").Collection("user")
@@ -35,6 +37,9 @@ func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 // GetPeopleEndpoint ...
 func GetPeopleEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "*")
+	response.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+
 	var people []Person
 	collection := client.Database("mymongodb01").Collection("user")
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
@@ -61,6 +66,8 @@ func GetPeopleEndpoint(response http.ResponseWriter, request *http.Request) {
 // GetPersonEndpoint ...
 func GetPersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "*")
+	response.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 	params := mux.Vars(request)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 	var person Person
@@ -78,6 +85,14 @@ func GetPersonEndpoint(response http.ResponseWriter, request *http.Request) {
 // DeletePersonEndpoint ...
 func DeletePersonEndpoint(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
+	response.Header().Set("Access-Control-Allow-Origin", "*")
+	response.Header().Set("Access-Control-Allow-Credentials", "true")
+	response.Header().Set("Access-Control-Request-Method", "DELETE")
+	response.Header().Set("Access-Control-Request-Headers", "X-PINGOTHER, Content-Type")
+	response.Header().Set("Access-Control-Allow-Methods", "DELETE")
+	response.Header().Set("Access-Control-Max-Age", "86400")
+	response.Header().Set("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type")
+	//response.Header().Set("Access-Control-Allow-Headers", "content-type,access-control-allow-origin, access-control-allow-headers, access-control-allow-credentials, access-control-allow-methods")
 	params := mux.Vars(request)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 	var person Person
