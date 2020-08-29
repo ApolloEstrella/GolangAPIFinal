@@ -38,6 +38,8 @@ func main() {
 
 		},
 	})
+
+	// create handler
 	handler := c.Handler(router)
 
 	router.HandleFunc("/api/person", CreatePersonEndpoint).Methods("POST")
